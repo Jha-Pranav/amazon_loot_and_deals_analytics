@@ -6,6 +6,23 @@ __pycache__/
 # C extensions
 *.so
 
+# Do not commit passwords, keys or any, secret information. Store it in .secrets.yaml instead
+mask.*
+*.session
+
+# Ignore compressed files
+*.7z
+*.zip
+
+# Do not commit data files.
+*.csv
+*.db
+*.sqlite3
+*.sqlite3-journal
+*.dat
+*.mdb
+
+
 # Distribution / packaging
 .Python
 build/
