@@ -1,0 +1,5 @@
+requests==2.26.0
+beautifulsoup4==4.9.3
+numpy==1.21.2
+selenium==3.141.0
+telethon
