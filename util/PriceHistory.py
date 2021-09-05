@@ -21,7 +21,6 @@ class CollectData:
         self.path = config_file_path
         config.read(config_file_path)
         self.data = eval(config["PriceHistory"]["data"])
-        
 
         self.headers = eval(config["PriceHistory"]["headers"])
 
@@ -49,7 +48,7 @@ class CollectData:
         else:
             print("Error occured while generating cookies or csrf_token")
 
-    def translate2OriginalUrl(self,url):
+    def translate2OriginalUrl(self, url):
         response = requests.get(url, headers=self.headers)
         if response.status_code != 200:
             print(
@@ -60,23 +59,25 @@ class CollectData:
             self.get_cookies_and_csrf_token()
             response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
-            soup = BeautifulSoup(response.text,features="lxml")
-            product_url_text = soup.findAll('div',{"wire:initial-data":True})[0]["wire:initial-data"]
+            soup = BeautifulSoup(response.text, features="lxml")
+            product_url_text = soup.findAll("div", {"wire:initial-data": True})[0][
+                "wire:initial-data"
+            ]
             product_url_text = json.loads(product_url_text)
-            product_url = product_url_text['serverMemo']['data']['url']
+            product_url = product_url_text["serverMemo"]["data"]["url"]
             return product_url
         else:
             print(
                 "Error occured while fetching the data : " + str(response.status_code)
             )
-        
-    def collect(self,url):
+
+    def collect(self, url):
         self.data["updates"][0]["payload"]["value"] = url
         response = requests.post(
             self.SEARCH_BOX_URL, headers=self.headers, data=json.dumps(self.data)
         )
         if response.status_code != 200:
-            
+
             # let's try it one more time
             print("Token/cookie is not valid generating new")
             self.get_cookies_and_csrf_token()
@@ -85,12 +86,12 @@ class CollectData:
             )
         if response.status_code == 200:
             response = response.json()
-            
+
             response = response["effects"]["emits"][0]["params"][0]
             if isinstance(response, list):
                 print(response[0])
                 return None
-            
+
             return {
                 "response_id": response.get("id"),
                 "response_title": response.get("title"),
@@ -98,14 +99,15 @@ class CollectData:
                 "data": np.array(eval(response.get("data"))),
                 "product_image": response.get("image"),
                 "price_drop_chances": response.get("drop_chance"),
-                "product_rating": BeautifulSoup(response.get('rating'),features="lxml").find('div').text
+                "product_rating": BeautifulSoup(response.get("rating"), features="lxml")
+                .find("div")
+                .text,
             }
         else:
             print(
                 "Error occured while fetching the data : " + str(response.status_code)
             )
 
-            
 
-if __file__=='__main__':
+if __file__ == "__main__":
     pass
